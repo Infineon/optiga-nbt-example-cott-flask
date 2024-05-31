@@ -1,0 +1,49 @@
+{
+    "name": "nbt.cloud.cott",
+    "build": {
+        "dockerfile": "Dockerfile"
+    },
+    "postCreateCommand": "python -m pip install -e .[dev]",
+    "postStartCommand": "git config --global --add safe.directory ${containerWorkspaceFolder}",
+    "appPort": [5000],
+    "customizations": {
+        "vscode": {
+            "extensions": [
+                "ms-python.python",
+                "ms-python.vscode-pylance",
+                "ms-python.flake8",
+                "ms-python.mypy-type-checker",
+                "ms-python.pylint",
+                "visualstudioexptteam.vscodeintellicode",
+                "visualstudioexptteam.intellicode-api-usage-examples",
+                "42crunch.vscode-openapi",
+                "streetsidesoftware.code-spell-checker",
+                "editorconfig.editorconfig"
+            ],
+            "settings": {
+                "cSpell.diagnosticLevel": "Hint",
+                "python.analysis.typeCheckingMode": "strict",
+                "python.defaultInterpreterPath": "/usr/local/bin/python3",
+                "python.experiments.enabled": false,
+                "python.languageServer": "Pylance",
+                "mypy-type-checker.args": [
+                    "--ignore-missing-imports",
+                    "--strict"
+                ],
+                "mypy-type-checker.importStrategy": "fromEnvironment",
+                "mypy-type-checker.path": ["/usr/local/bin/mypy"],
+                "pythonTestExplorer.testFramework": "pytest",
+                "python.terminal.activateEnvironment": false,
+                "python.testing.pytestEnabled": true,
+                "python.testing.promptToConfigure": false,
+                "python.testing.pytestArgs": ["."],
+                "python.testing.unittestEnabled": false,
+                "testExplorer.useNativeTesting": true,
+                "workbench.colorCustomizations": {
+                    "editorHint.foreground": "#ff0000"
+                }
+            }
+        }
+    }
+}
+

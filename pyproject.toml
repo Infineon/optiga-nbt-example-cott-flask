@@ -1,0 +1,76 @@
+# SPDX-FileCopyrightText: 2024 Infineon Technologies AG
+# SPDX-License-Identifier: MIT
+
+[build-system]
+requires = [
+    "setuptools",
+    "setuptools_scm[toml]>=7"
+]
+build-backend = "setuptools.build_meta"
+
+[project]
+name = "cott"
+description = "OPTIGA (tm) Authenticate NBT Cryptographic One-Time Token utility"
+readme = "README.rst"
+requires-python = ">=3.10"
+license = {text = "MIT"}
+classifiers = [
+    "Development Status :: 3 - Alpha",
+    "Environment :: Console",
+    "Intended Audience :: Developers",
+    "License :: OSI Approved :: MIT License",
+    "Natural Language :: English",
+    "Programming Language :: Python :: 3.10",
+    "Topic :: Utilities",
+    "Typing :: Typed"
+]
+dependencies = ["pycryptodome"]
+dynamic = ["version"]
+
+[project.urls]
+Homepage = "github.com/infineon/optiga-nbt-example-cott-flask"
+
+[project.optional-dependencies]
+# User configuration to also offer COTT server
+server = ["flask", "flask-cors"]
+# Internal configuration to be able to run tests
+test = ["pytest", "coverage[toml]", "cott[server]"]
+# Internal configuration to be able to build documentation
+doc = ["sphinx", "sphinx-pyproject", "cott[server]"]
+# Internal configuration to be able to run static code analysis
+lint = ["mypy", "types-Flask-Cors", "flake8", "pylint", "reuse", "cott[server]"]
+# Internal configuration to be able to run all steps during CI
+ci = ["cott[server,test,doc,lint]"]
+# Internal configuration to be able to develop locally
+dev = ["autopep8", "cott[server,test,doc,lint]"]
+
+[tool.setuptools]
+license-files = ["LICENSES/*"]
+
+[tool.setuptools.package-data]
+cott = ["py.typed"]
+"cott.server" = ["templates/*"]
+
+[tool.setuptools.packages]
+find = {where = ["src"]}
+
+[tool.setuptools_scm]
+write_to = "src/cott/version.py"
+git_describe_command = "git describe --dirty --tags --long --match v* --first-parent"
+
+[tool.coverage.run]
+source = ["cott"]
+omit = ["tests/*", "*/cott/version.py", "*/cott/server/__main__.py"]
+
+[tool.mypy]
+python_version = "3.10"
+
+[tool.pylint.main]
+ignore = ["version.py"]
+py-version = "3.10"
+
+[tool.pylint.format]
+max-line-length = 180
+
+[tool.pytest.ini_options]
+testpaths = ["tests"]

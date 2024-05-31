@@ -1,0 +1,190 @@
+{#
+SPDX-FileCopyrightText: 2024 Infineon Technologies AG
+SPDX-License-Identifier: MIT
+#}
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>NBT Cryptographic One-Time Token</title>
+  <script type="module"
+    src="https://cdn.jsdelivr.net/npm/@infineon/infineon-design-system-stencil/dist/infineon-design-system-stencil/infineon-design-system-stencil.esm.js"></script>
+  <style>
+    body {
+      margin: 0;
+      font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', 'Roboto', 'Oxygen', 'Ubuntu', 'Cantarell', 'Fira Sans', 'Droid Sans', 'Helvetica Neue', sans-serif;
+      -webkit-font-smoothing: antialiased;
+      -moz-osx-font-smoothing: grayscale;
+    }
+
+    .container {
+      margin: 0;
+      padding: 0;
+      display: flex;
+      flex-direction: column;
+      min-height: 100vh;
+    }
+
+    .app {
+      flex-grow: 1;
+    }
+
+    @media only screen and (max-width: 575px) {
+      .app {
+        padding: 0.5rem;
+      }
+
+      table>tbody>tr>td {
+        padding-left: 0;
+      }
+    }
+
+    @media only screen and (min-width: 576px) and (max-width: 767px) {
+      .app {
+        padding-left: 1rem;
+        padding-right: 1rem;
+      }
+
+      table>tbody>tr>td {
+        padding-left: 1rem;
+      }
+    }
+
+    @media only screen and (min-width: 768px) {
+      .app {
+        padding-left: 2rem;
+        padding-right: 2rem;
+      }
+
+      table>tbody>tr>td {
+        padding-left: 2rem;
+      }
+    }
+
+    table {
+      display: block;
+      overflow-x: auto;
+      table-layout: fixed;
+      width: 100%;
+    }
+
+    tbody {
+      display: table;
+      width: 100%;
+    }
+
+    table>tbody>tr>th,
+    table>tbody>tr>td {
+      text-align: start;
+      padding: 5px;
+      vertical-align: middle;
+    }
+
+    table>tbody>tr>th {
+      white-space: nowrap;
+    }
+
+    table>tbody>tr>td {
+      word-wrap: break-word;
+      overflow-wrap: break-word;
+      max-width: 1px; /* hack to break long hex values */
+      width: 100%;
+    }
+
+    .hex {
+      font-family: source-code-pro, Menlo, Monaco, Consolas, 'Courier New', monospace;
+    }
+  </style>
+</head>
+
+<body>
+  <div class="container">
+    <ifx-navbar application-name="OPTIGA&trade; Authenticate NBT" fixed="false"></ifx-navbar>
+
+    <div class="app">
+      <h2>NBT Cryptographic One-Time Token</h2>
+      <p>
+        Verify the authenticity of your device by checking the cryptographic one-time token created by an <a href="https://www.infineon.com/OPTIGA-Authenticate-NBT">OPTIGA&trade; Authenticate NBT</a>.
+      </p>
+
+      <p>
+        Your OPTIGA&trade; Authenticate NBT can be verified by performing these 3 simple steps:
+        <ul>
+          <li>Use the <i>NBT Personalization</i> mobile phone app (for <a href="https://github.com/infineon/optiga-nbt-example-perso-android">Android</a> or <a href="https://github.com/infineon/optiga-nbt-example-perso-ios">iOS</a>) to configure the OPTIGA&trade; Authenticate NBT with the URL of this page</li>
+          <li>Tap your NFC-enabled phone to your OPTIGA&trade; Authenticate NBT</li>
+          <li>Open the dynamically generated link and see the parsed results</li>
+        </ul>
+      </p>
+
+      <h3>Parsed COTT information:</h3>
+      <table>
+        <tbody>
+          {% if cott %}
+          <tr>
+            <th>Header:</th>
+            <td class="hex">{{ cott.header.hex() }}</td>
+          </tr>
+          <tr>
+            <th>UID:</th>
+            <td class="hex">{{ cott.uid.hex() }}</td>
+          </tr>
+          <tr>
+            <th>Random:</th>
+            <td class="hex">{{ cott.random.hex() }}</td>
+          </tr>
+          <tr>
+            <th>MAC:</th>
+            <td class="hex">{{ cott.mac.hex() }}</td>
+          </tr>
+          <tr>
+            <th>Status:</th>
+            <td>
+              {% if not key %}
+              <ifx-status label="Unknown UID" color="orange" border="true"></ifx-status>
+              {% elif not cott.verify(key) %}
+              <ifx-status label="Invalid MAC (wrong key)" color="orange" border="true"></ifx-status>
+              {% elif not fresh %}
+              <ifx-status label="COTT previously used" color="orange" border="true"></ifx-status>
+              {% else %}
+              <ifx-status label="Fresh and valid COTT" color="green" border="true"></ifx-status>
+              {% endif %}
+            </td>
+          </tr>
+          {% else %}
+          <tr>
+            <th>Status:</th>
+            <td><ifx-status label="Syntactically invalid / missing COTT" color="orange" border="true"></ifx-status></td>
+          </tr>
+          {% endif %}
+        </tbody>
+      </table>
+    </div>
+
+    <ifx-footer variant="medium">
+      <div slot="socials">
+        <ifx-link variant="title" href="http://facebook.com/infineon">
+          <ifx-icon icon="facebook"></ifx-icon>
+        </ifx-link>
+        <ifx-link variant="title" href="http://youtube.com/infineon">
+          <ifx-icon icon="youtube"></ifx-icon>
+        </ifx-link>
+        <ifx-link variant="title" href="http://instagram.com/infineon">
+          <ifx-icon icon="instagram"></ifx-icon>
+        </ifx-link>
+        <ifx-link variant="title" href="http://linkedin.com/infineon">
+          <ifx-icon icon="linkedin"></ifx-icon>
+        </ifx-link>
+        <ifx-link variant="title" href="http://twitter.com/infineon">
+          <ifx-icon icon="twitter"></ifx-icon>
+        </ifx-link>
+        <ifx-link variant="title" href="http://xing.com/infineon">
+          <ifx-icon icon="xing"></ifx-icon>
+        </ifx-link>
+      </div>
+    </ifx-footer>
+  </div>
+</body>
+
+</html>

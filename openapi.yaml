@@ -1,0 +1,57 @@
+# SPDX-FileCopyrightText: 2024 Infineon Technologies AG
+# SPDX-License-Identifier: MIT
+
+openapi: 3.0.2
+info:
+  title: NBT Cryptographic One-Time Token
+  description: This REST API offers a validation service for Cryptographic One-Time Tokens as created by the OPTIGA (tm) Authenticate NBT.
+  license:
+    name: MIT
+    url: https://opensource.org/license/mit/
+  version: 0.1.0
+servers:
+  - url: https://optiga-nbt-cott-service.infineon.com
+  - url: http://localhost:5000
+paths:
+  /:
+    get:
+      summary: Validate Cryptographic One-Time Token
+      operationId: validate
+      parameters:
+        - name: cott
+          in: query
+          description: Base64 encoded Cryptographic One-Time Token as created by the OPTIGA (tm) Authenticate NBT
+          required: true
+          schema:
+            type: string
+            default: AAECAwQFBgcICQoLDA0ODxDbq1lCP77Fp74yxIzhqA4z
+      responses:
+        '200':
+          description: COTT fresh and valid
+        '400':
+          description: Syntactically invalid / missing COTT
+        '403':
+          description: COTT MAC mismatch -> invalid AES key
+        '404':
+          description: No AES key found for COTT's UID
+        '429':
+          description: COTT has been used before
+  /healthcheck:
+    get:
+      summary: Check current status of REST API
+      operationId: healthcheck
+      responses:
+        '200':
+          description: REST API working as expected
+          content:
+            application/json:
+              schema:
+                type: object
+                required:
+                  - status
+                properties:
+                  status:
+                    type: string
+                    description: REST API status
+                    enum:
+                      - running
